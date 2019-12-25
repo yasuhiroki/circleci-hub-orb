@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+  hub: yasuhiroki/hub@dev:alpha
+
+jobs:
+  validate:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: circleci orb validate hub.yml
+  test-install:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - hub/install
+      - run: hub --version
+
+workflows:
+  test:
+    jobs:
+      - validate
+      - test-install
