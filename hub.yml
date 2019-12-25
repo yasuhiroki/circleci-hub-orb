@@ -47,7 +47,7 @@ commands:
         type: string
     steps:
       - run: |
-          hub release create \
+          timeout 30 hub release create \
           <<#parameters.draft>>-d<</parameters.draft>> \
           <<#parameters.prerelease>>-p<</parameters.prerelease>> \
           <<#parameters.message>>-m <<parameters.message>><</parameters.message>> \
