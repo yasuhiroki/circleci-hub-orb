@@ -28,6 +28,7 @@ jobs:
       # TODO: circleci orb publish hub.yml yasuhiroki/hub@${TAG}
       - hub/install
       - hub/create-release:
+          draft: true
           message: latest
           target: release
           tag: latest
