@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   hub: yasuhiroki/hub@dev:alpha
+  cli: circleci/circleci-cli@0.1.6
 
 jobs:
   validate:
@@ -9,6 +10,7 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
+      - cli/install
       - run: circleci orb validate hub.yml
   test-install:
     docker:
@@ -17,9 +19,29 @@ jobs:
       - checkout
       - hub/install
       - run: hub --version
+  release:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - cli/install
+      # TODO: circleci orb publish hub.yml yasuhiroki/hub@${TAG}
+      - hub/install
+      - hub/create-release:
+          message: latest
+          target: release
+          tag: latest
 
 workflows:
   test:
     jobs:
       - validate
       - test-install
+  release:
+    jobs:
+      - release:
+          context: yasuhiroki
+          filters:
+            branches:
+              only:
+                - release
