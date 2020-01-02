@@ -55,3 +55,28 @@ commands:
           <<#parameters.target>>-t <<parameters.target>><</parameters.target>> \
           <<parameters.tag>>
 
+examples:
+  hub_release:
+    description: |
+      Run hub release command
+    usage:
+      orbs:
+        hub: yasuhiroki/hub@dev:alpha
+      jobs:
+        release:
+          docker:
+            - image: circleci/node:latest
+          steps:
+            - checkout
+            - hub/install
+            - hub/create-release:
+                draft: true
+                message: latest
+                target: release
+                tag: dev-alpha
+      version: 2.1
+      workflows:
+        main:
+          jobs:
+            - release
+
