@@ -31,10 +31,10 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
+      - cli/install
       - run: |
           current=$(circleci orb info yasuhiroki/hub | grep Latest | sed 's/^.*@//')
           git log --no-merges --pretty=format:"%s %h" v${current}..HEAD >> message_body
-      - cli/install
       - run: circleci orb publish promote yasuhiroki/hub@dev:alpha patch
       - hub/install
       - run: |
