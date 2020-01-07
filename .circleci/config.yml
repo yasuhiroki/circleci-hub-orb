@@ -27,11 +27,7 @@ jobs:
       - cli/install
       - run: circleci orb publish hub.yml yasuhiroki/hub@dev:alpha
       - hub/install
-      - hub/create-release:
-          draft: true
-          message: latest
-          target: release
-          tag: dev-alpha
+      - run: timeout 30 hub release create -d -m latest -t release dev-alpha
 
 workflows:
   test:

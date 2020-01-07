@@ -2,7 +2,10 @@ version: 2.1
 
 description: |
   Install and run hub (https://github.com/github/hub).
-  This orb is mainted in https://github.com/yasuhiroki/circleci-hub-orb
+  Inspired by circleci/aws-cli orb.
+
+display:
+  home_url: https://github.com/yasuhiroki/circleci-hub-orb
 
 commands:
   install:
@@ -18,40 +21,25 @@ commands:
             ./hub-linux-amd64-2.13.0/install
           fi
           rm -rf hub-linux-amd64-2.13.0
-  create-release:
-    description:
-      Create GitHub release by hub command
-    parameters:
-      draft:
-        description: draft release
-        type: boolean
-        default: false
-      prerelease:
-        description: prerelease
-        type: boolean
-        default: false
-      message:
-        description: release title
-        type: string
-        default: ""
-      message-file:
-        description: release title and body
-        type: string
-        default: ""
-      target:
-        description: branch name to attach the release
-        type: string
-        default: ""
-      tag:
-        description: release tag name
-        type: string
-    steps:
-      - run: |
-          timeout 30 hub release create \
-          <<#parameters.draft>>-d<</parameters.draft>> \
-          <<#parameters.prerelease>>-p<</parameters.prerelease>> \
-          <<#parameters.message>>-m <<parameters.message>><</parameters.message>> \
-          <<#parameters.message-file>>-F <<parameters.message-file>><</parameters.message-file>> \
-          <<#parameters.target>>-t <<parameters.target>><</parameters.target>> \
-          <<parameters.tag>>
+
+examples:
+  github_release:
+    description: |
+      Run hub release create command
+    usage:
+      orbs:
+        hub: yasuhiroki/hub@dev:alpha
+      jobs:
+        release:
+          docker:
+            - image: circleci/node:latest
+          steps:
+            - checkout
+            - hub/install
+            - run: timeout 30 hub release create -d -m latest -t release v0.0.1
+      version: 2.1
+      workflows:
+        main:
+          jobs:
+            - release
 
