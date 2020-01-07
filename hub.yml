@@ -2,7 +2,8 @@ version: 2.1
 
 description: |
   Install and run hub (https://github.com/github/hub).
-  This orb is mainted in https://github.com/yasuhiroki/circleci-hub-orb
+  This orb is mainted in https://github.com/yasuhiroki/circleci-hub-orb.
+  Inspired by circleci/aws-cli orb.
 
 commands:
   install:
