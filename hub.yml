@@ -15,7 +15,7 @@ commands:
       - run: |
           wget $(curl -s https://api.github.com/repos/github/hub/releases/latest | grep -o 'https://.*hub-linux-amd64.*tgz')
           tar zxf hub-linux-amd64-*.tgz
-          HUBPATH=$(find . -maxdepth 1 -type d | sort | grep hub-linux)
+          HUBPATH=$(find . -maxdepth 1 -type d | grep hub-linux)
           if which sudo > /dev/null; then
             sudo $HUBPATH/install
           else
