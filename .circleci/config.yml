@@ -7,17 +7,17 @@ aliases:
       orb-name: mattvanstone/hub
   - &ssh_fingerprint
       ssh-fingerprints: 87:b9:81:b8:6c:86:6c:46:0c:65:20:72:53:09:e5:55
-jobs:
-  persist-checkout-to-workspace:
-    docker:
-      - image: python
-    steps:
-      - checkout
-      - run: rm -rf .git
-      - persist_to_workspace:
-          root: /root
-          paths:
-            - project
+# jobs:
+#   persist-checkout-to-workspace:
+#     docker:
+#       - image: python
+#     steps:
+#       - checkout
+#       - run: rm -rf .git
+#       - persist_to_workspace:
+#           root: /root
+#           paths:
+#             - project
 workflows:
   # integration-tests_prod-release:
   #   jobs:
@@ -71,13 +71,12 @@ workflows:
     jobs:
       - persist-checkout-to-workspace
       - orb-tools/lint
-      # - orb-tools/pack:
-      #     requires:
-      #       - orb-tools/lint
+      - orb-tools/pack:
+          requires:
+            - orb-tools/lint
       - orb-tools/publish-dev:
           <<: *orb_name
           requires:
-            - persist-checkout-to-workspace
             - orb-tools/lint
       - orb-tools/trigger-integration-workflow:
           filters:
