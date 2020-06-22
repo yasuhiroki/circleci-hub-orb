@@ -1,12 +1,9 @@
 version: 2.1
-
 description: |
   Install and run hub (https://github.com/github/hub).
   Inspired by circleci/aws-cli orb.
-
 display:
   home_url: https://github.com/yasuhiroki/circleci-hub-orb
-
 commands:
   install:
     description:
@@ -24,7 +21,6 @@ commands:
                 $HUBPATH/install
               fi
               rm -rf $HUBPATH hub-linux-amd64-*.tgz
-
 examples:
   github_release:
     description: |
@@ -45,4 +41,3 @@ examples:
         main:
           jobs:
             - release
-
