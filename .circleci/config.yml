@@ -3,10 +3,10 @@ orbs:
   orb-tools: circleci/orb-tools@8.27.4
   your-orb: 'mattvanstone/hub@dev:alpha'
 aliases:
-    - &orb_name
-        orb-name: mattvanstone/hub
-    - &ssh_fingerprint
-        ssh-fingerprints: 87:b9:81:b8:6c:86:6c:46:0c:65:20:72:53:09:e5:55
+  - &orb_name
+      orb-name: mattvanstone/hub
+  - &ssh_fingerprint
+      ssh-fingerprints: 87:b9:81:b8:6c:86:6c:46:0c:65:20:72:53:09:e5:55
 workflows:
   # integration-tests_prod-release:
   #   jobs:
@@ -83,4 +83,3 @@ workflows:
             - orb-tools/publish-dev
           <<: *ssh_fingerprint
           tag: master
-          
