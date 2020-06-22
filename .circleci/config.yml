@@ -58,7 +58,7 @@ workflows:
   publish:
     jobs:
       - publish:
-          context: ${CIRCLE_PROJECT_USERNAME}
+          context: circleci-hub-orb
           filters:
             branches:
               only:
@@ -66,7 +66,7 @@ workflows:
   release:
     jobs:
       - release:
-          context: ${CIRCLE_PROJECT_USERNAME}
+          context: circleci-hub-orb
           filters:
             branches:
               only:
