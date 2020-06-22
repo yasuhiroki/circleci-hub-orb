@@ -1,72 +1,69 @@
 version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@8.27.4
-  your-orb: 'mattvanstone/hub@dev:alpha'
+  hub: 'mattvanstone/hub@dev:alpha'
 aliases:
   - &orb_name
       orb-name: mattvanstone/hub
   - &ssh_fingerprint
       ssh-fingerprints: 87:b9:81:b8:6c:86:6c:46:0c:65:20:72:53:09:e5:55
-# jobs:
-#   persist-checkout-to-workspace:
-#     docker:
-#       - image: python
-#     steps:
-#       - checkout
-#       - run: rm -rf .git
-#       - persist_to_workspace:
-#           root: /root
-#           paths:
-#             - project
+jobs:
+  integration-tests:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - hub/install
+      - run: hub --version
 workflows:
-  # integration-tests_prod-release:
-  #   jobs:
-  #     - integration-tests:
-  #         filters:
-  #           branches:
-  #             ignore: /.*/
-  #           tags:
-  #             only: /integration-.*/
-  #         name: integration-tests-dev
-  #     - integration-tests:
-  #         filters:
-  #           branches:
-  #             ignore: /.*/
-  #           tags:
-  #             only: /master-.*/
-  #         name: integration-tests-master
-  #     - orb-tools/dev-promote-prod:
-  #         filters:
-  #           branches:
-  #             ignore: /.*/
-  #           tags:
-  #             only: /master-patch.*/
-  #         name: dev-promote-patch
-  #         <<: *orb_name
-  #         requires:
-  #           - integration-tests-master
-  #     - orb-tools/dev-promote-prod:
-  #         filters:
-  #           branches:
-  #             ignore: /.*/
-  #           tags:
-  #             only: /master-minor.*/
-  #         name: dev-promote-minor
-  #         <<: *orb_name
-  #         release: minor
-  #         requires:
-  #           - integration-tests-master
-  #     - orb-tools/dev-promote-prod:
-  #         filters:
-  #           branches:
-  #             ignore: /.*/
-  #           tags:
-  #             only: /master-major.*/
-  #         name: dev-promote-major
-  #         <<: *orb_name
-  #         release: major
-  #         requires:
-  #           - integration-tests-master
+  integration-tests_prod-release:
+    jobs:
+      - integration-tests:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /integration-.*/
+          name: integration-tests-dev
+      - integration-tests:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-.*/
+          name: integration-tests-master
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-patch.*/
+          name: dev-promote-patch
+          <<: *orb_name
+          requires:
+            - integration-tests-master
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-minor.*/
+          name: dev-promote-minor
+          <<: *orb_name
+          release: minor
+          requires:
+            - integration-tests-master
+      - orb-tools/dev-promote-prod:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /master-major.*/
+          name: dev-promote-major
+          <<: *orb_name
+          release: major
+          requires:
+            - integration-tests-master
   lint_pack-validate_publish-dev:
     jobs:
       - orb-tools/lint
