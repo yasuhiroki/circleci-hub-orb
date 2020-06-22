@@ -91,4 +91,5 @@ workflows:
             - orb-tools/publish-dev
           <<: *ssh_fingerprint
           tag: master
-          static-release-type: patch
+          use-git-diff: false
+          static-release-type: minor
