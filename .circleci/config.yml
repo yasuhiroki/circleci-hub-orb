@@ -69,7 +69,6 @@ workflows:
   #           - integration-tests-master
   lint_pack-validate_publish-dev:
     jobs:
-      - persist-checkout-to-workspace
       - orb-tools/lint
       - orb-tools/pack:
           requires:
