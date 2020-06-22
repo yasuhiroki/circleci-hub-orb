@@ -26,8 +26,9 @@ examples:
     description: |
       Run hub release create command
     usage:
+      version: 2.1
       orbs:
-        hub: yasuhiroki/hub@dev:alpha
+        hub: mattvanstone/hub@dev:alpha
       jobs:
         release:
           docker:
@@ -36,7 +37,6 @@ examples:
             - checkout
             - hub/install
             - run: timeout 30 hub release create -d -m latest -t release v0.0.1
-      version: 2.1
       workflows:
         main:
           jobs:
