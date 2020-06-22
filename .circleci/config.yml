@@ -77,6 +77,7 @@ workflows:
           <<: *orb_name
           requires:
             - orb-tools/lint
+            - orb-tools/pack
       - orb-tools/trigger-integration-workflow:
           filters:
             branches:
