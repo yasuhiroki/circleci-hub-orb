@@ -1,73 +1,85 @@
 version: 2.1
-
 orbs:
-  hub: mattvanstone/hub@dev:alpha
-  cli: circleci/circleci-cli@0.1.8
-
-jobs:
-  validate:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - cli/install
-      - run:
-          name: Validate
-          command: circleci orb validate hub.yml
-  test-install:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - hub/install
-      - run: hub --version
-  publish:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - cli/install
-      - run:
-          name: Publish
-          command: circleci orb publish hub.yml ${CIRCLE_PROJECT_USERNAME}/hub@dev:alpha
-  release:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - cli/install
-      - run: |
-          current=$(circleci orb info ${CIRCLE_PROJECT_USERNAME}/hub | grep Latest | sed 's/^.*@//')
-          git log --no-merges --pretty=format:"%s %h" v${current}..HEAD >> message_body
-      - run: circleci orb publish promote ${CIRCLE_PROJECT_USERNAME}/hub@dev:alpha patch
-      - hub/install
-      - run:
-          name: Create release
-          command: |
-            released=$(circleci orb info ${CIRCLE_PROJECT_USERNAME}/hub | grep Latest | sed 's/^.*@//')
-            echo "Release v${released}"  > message
-            echo ""                     >> message
-            cat message_body            >> message
-            timeout 30 hub release create -F message -t release v${released}
-
+  orb-tools: circleci/orb-tools@8.27.4
+  your-orb: 'mattvanstone/hub@dev:alpha'
+aliases:
+    - &orb_name
+        orb-name: mattvanstone/hub
+    - &ssh_fingerprint
+        ssh-fingerprints: 87:b9:81:b8:6c:86:6c:46:0c:65:20:72:53:09:e5:55
 workflows:
-  test:
+  # integration-tests_prod-release:
+  #   jobs:
+  #     - integration-tests:
+  #         filters:
+  #           branches:
+  #             ignore: /.*/
+  #           tags:
+  #             only: /integration-.*/
+  #         name: integration-tests-dev
+  #     - integration-tests:
+  #         filters:
+  #           branches:
+  #             ignore: /.*/
+  #           tags:
+  #             only: /master-.*/
+  #         name: integration-tests-master
+  #     - orb-tools/dev-promote-prod:
+  #         filters:
+  #           branches:
+  #             ignore: /.*/
+  #           tags:
+  #             only: /master-patch.*/
+  #         name: dev-promote-patch
+  #         <<: *orb_name
+  #         requires:
+  #           - integration-tests-master
+  #     - orb-tools/dev-promote-prod:
+  #         filters:
+  #           branches:
+  #             ignore: /.*/
+  #           tags:
+  #             only: /master-minor.*/
+  #         name: dev-promote-minor
+  #         <<: *orb_name
+  #         release: minor
+  #         requires:
+  #           - integration-tests-master
+  #     - orb-tools/dev-promote-prod:
+  #         filters:
+  #           branches:
+  #             ignore: /.*/
+  #           tags:
+  #             only: /master-major.*/
+  #         name: dev-promote-major
+  #         <<: *orb_name
+  #         release: major
+  #         requires:
+  #           - integration-tests-master
+  lint_pack-validate_publish-dev:
     jobs:
-      - validate
-      - test-install
-  publish:
-    jobs:
-      - publish:
-          context: circleci-hub-orb
+      - orb-tools/lint
+      - orb-tools/pack:
+          requires:
+            - orb-tools/lint
+      - orb-tools/publish-dev:
+          <<: *orb_name
+          requires:
+            - orb-tools/pack
+      - orb-tools/trigger-integration-workflow:
           filters:
             branches:
-              only:
-                - master
-  release:
-    jobs:
-      - release:
-          context: circleci-hub-orb
+              ignore: master
+          name: trigger-integration-dev
+          requires:
+            - orb-tools/publish-dev
+          <<: *ssh_fingerprint
+      - orb-tools/trigger-integration-workflow:
           filters:
             branches:
-              only:
-                - release
+              only: master
+          name: trigger-integration-master
+          requires:
+            - orb-tools/publish-dev
+          <<: *ssh_fingerprint
+          tag: master
