@@ -16,11 +16,11 @@ commands:
           wget $(curl -s https://api.github.com/repos/github/hub/releases/latest | grep -o 'https://.*hub-linux-amd64.*tgz')
           tar zxf hub-linux-amd64-*.tgz
           if which sudo > /dev/null; then
-            sudo ./hub-linux-amd64-2.13.0/install
+            sudo ./hub-linux-amd64-*/install
           else
-            ./hub-linux-amd64-2.13.0/install
+            ./hub-linux-amd64-*/install
           fi
-          rm -rf hub-linux-amd64-2.13.0
+          rm -rf hub-linux-amd64-*
 
 examples:
   github_release:

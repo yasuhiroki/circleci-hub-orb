@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   hub: yasuhiroki/hub@dev:alpha
-  cli: circleci/circleci-cli@0.1.6
+  cli: circleci/circleci-cli@0.1.8
 
 jobs:
   validate:
